@@ -6,20 +6,15 @@
 (in-package :mjalen/site)
 (asdf:load-system :spinneret/ps)
 
-(defparameter *public-root* #p"/Users/jalenmoore/Documents/cl-personal/public/") ; remove hard-code
-
 (defparameter *server* nil)
-(defun safe-start-server (new-instance)
-  "Verify that the current *SERVER* is not running before overriding with NEW-INSTANCE."
+(defun safe-start-server (public-path)
+  "Verify that the current *SERVER* is not running before overriding the server with a new PUBLIC-PATH."
   (if *server*
       (hunchentoot:stop *server*))
-  (setf *server* new-instance)
+  (setf *server* (make-instance 'hunchentoot:easy-acceptor
+                                :port 33333
+ 				:document-root public-path))
   (hunchentoot:start *server*))
-
-"Start Server"
-; (safe-start-server (make-instance 'hunchentoot:easy-acceptor
-; 				  :port 33333
-; 				  :document-root *public-root*))
 
 "Global CSS"
 (defparameter *css*
