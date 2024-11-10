@@ -17,7 +17,7 @@
   (if *server*
       (hunchentoot:stop *server*))
   (setf *server* (make-instance 'hunchentoot:easy-acceptor
-                                :port 443
+                                :port 80 
  				:document-root (asdf:system-relative-pathname :site "public/")))
   (hunchentoot:start *server*))
 
