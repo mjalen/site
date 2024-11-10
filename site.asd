@@ -10,8 +10,8 @@
   :depends-on ("hunchentoot"
 	       "spinneret"
 	       "lass"
-	       "parenscript"
-	       (:feature :ros.installing "site/main"))
+	       "parenscript")
+  :components ((:file "main"))
   :output-files (image-op (o c)
 			  (output-files o :site/command))
   :in-order-to ((build-op (program-op "site/command"))))
