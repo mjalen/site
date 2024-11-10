@@ -3,8 +3,12 @@
 ;; spinneret dsl for html.
 ;; lass for css
 ;; parenscript for js.
-(in-package :mjalen/site)
-(asdf:load-system :spinneret/ps)
+(defpackage :mjalen/site/main
+  (:use :cl)
+  (:export
+   :safe-start-server))
+
+(in-package :mjalen/site/main)
 
 (defparameter *server* nil)
 (defun safe-start-server (public-path)

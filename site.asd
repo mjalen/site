@@ -1,3 +1,5 @@
+(asdf:load-system :spinneret/ps)
+
 (asdf:defsystem #:mjalen/site
   :description "A personal site for moi."
   :version "0.0.1"
@@ -5,5 +7,4 @@
   :license "Public Domain"
   :pathname "src"
   :components
-  ((:file "package")
-   (:file "main" :depends-on ("package"))))
+  ((:file "main" :depends-on ("hunchentoot" "spinneret" "lass" "parenscript" ))))
