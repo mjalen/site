@@ -9,6 +9,7 @@
    :safe-start-server))
 
 (in-package :site/main)
+(asdf:load-system :spinneret/ps)
 
 (defparameter *server* nil)
 (defun safe-start-server ()
@@ -16,7 +17,7 @@
   (if *server*
       (hunchentoot:stop *server*))
   (setf *server* (make-instance 'hunchentoot:easy-acceptor
-                                :port 33333
+                                :port 443
  				:document-root (asdf:system-relative-pathname :site "public/")))
   (hunchentoot:start *server*))
 
@@ -126,18 +127,6 @@
        (:body :onscroll (:raw (parenscript:ps (handle-scroll)))
 	      (:header :class "width" "Jalen Moore")
 	      (:article :class "width" ,@body))))))
-
-; 	     (:nav
-; 	      (:img :src ,profile :alt "profile" :id "profile")
-; 	      (:a :href "/" "Home")
-; 	      (:a :href "/about" "About"))
-; 	     (:img :src "/banner.jpg" :alt "banner" :id "banner")
-; 	     (:article ,@body)
-; 	     (:footer
-; 	      (:a :href "https://github.com/mjalen"
-; 		  (:i :class "fa-brands fa-github" :title "GitHub"))
-; 	      (:a :href "https://wwww.linkedin.com/in/jalen-moore-a3a923275"
-; 		  (:i :class "fa-brands fa-linkedin" :title "LinkedIn")))))))
 
 (hunchentoot:define-easy-handler (home :uri "/")
     ()

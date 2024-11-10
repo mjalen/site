@@ -1,6 +1,5 @@
 (in-package :asdf-user)
 
-(load-system :spinneret/ps)
 (defsystem #:site
   :description "A personal site for moi."
   :version "0.0.1"
