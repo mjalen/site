@@ -6,7 +6,7 @@ exec ros -Q -- $0 "$@"
 
 (progn
   (ros:ensure-asdf)
-  (#+quicklisp (ql:quickload '(:mjalen/site) :silent t))) 
+  #+quicklisp (ql:quickload '(:mjalen/site) :silent t))
 
 (defun main ((public-path #p"/Users/jalenmoore/Documents/cl-personal/public/") &rest argv)
   (declare (ignore argv))
