@@ -6,11 +6,17 @@ exec ros -Q -- $0 "$@"
 
 (progn
   (ros:ensure-asdf)
-  #+quicklisp (ql:quickload '(:hunchentoot :spinneret :lass :parenscript) :silent t))
+  (let ((*standard-output* (make-broadcast-stream))
+	(*trace-output* (make-broadcast-stream)))
+    (funcall (intern (string '#:load-system) '#:asdf) '#:site/main)))
 
-(defun main ((public-path #p"/Users/jalenmoore/Documents/cl-personal/public/") &rest argv)
-  (declare (ignore argv))
-  (mjalen/site:safe-start-server public-path))
+(defpackage #:ros/script/site
+  (:use #:cl)
+  (:import-from #:site/main
+		#:safe-start-server))
 
-(main)
+(in-package #:ros/script/site)
+
+(defun main (&optional (public-path #p"/Users/jalenmoore/Documents/cl-personal/public/") &rest argv)
+  (apply #'safe-start-server public-path))
 
