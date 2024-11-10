@@ -3,15 +3,10 @@
 ;; spinneret dsl for html.
 ;; lass for css
 ;; parenscript for js.
-
-
-(ql:quickload :hunchentoot)
-(ql:quickload :spinneret)
-(ql:quickload :lass)
-(ql:quickload :parenscript)
+(in-package :mjalen/site)
 (asdf:load-system :spinneret/ps)
 
-(defparameter *public-root* "/Users/jalenmoore/Documents/cl-personal/public") ; remove hard-code
+(defparameter *public-root* #p"/Users/jalenmoore/Documents/cl-personal/public/") ; remove hard-code
 
 (defparameter *server* nil)
 (defun safe-start-server (new-instance)
@@ -21,10 +16,12 @@
   (setf *server* new-instance)
   (hunchentoot:start *server*))
 
-(safe-start-server (make-instance 'hunchentoot:easy-acceptor
-				  :port 33333
-				  :document-root *public-root*))
+"Start Server"
+; (safe-start-server (make-instance 'hunchentoot:easy-acceptor
+; 				  :port 33333
+; 				  :document-root *public-root*))
 
+"Global CSS"
 (defparameter *css*
   '((html
      :min-height "100%")
@@ -32,7 +29,9 @@
 	   (dark-background "#1e1e1e")
 	   (primary "#cacdcb")
 	   (secondary "#eaeaea")
-	   (shadow "rgb(0 0 0 / 0.15)"))
+	   (shadow "0.0rem 0.25rem 0.25rem 0 rgb(0 0 0 / 0.15)")
+	   (banner-height "400px")
+	   (icon-size "1.75rem"))
       (body :--scroll 0			; handled by js
 	    :display "flex"
 	    :flex-direction "column"
@@ -60,6 +59,7 @@
 	   :left "0%"
 	   :background-color #(dark-background)
 	   :padding "0.5rem 0.5rem"
+	   :box-shadow #(shadow)
 	   (img :height "max(3rem, calc(6rem - var(--scroll) * 3rem))"
 		:width "max(3rem, calc(6rem - var(--scroll) * 3rem))"
 		:border-radius "10rem"
@@ -69,11 +69,33 @@
 		:margin "0.25rem 0.75rem"
 		:top "0.25rem")
 	   (a :color #(light-text)
-	      :padding "0.25rem 0.75rem")
-	   (*#banner :margin "0rem 20%"
-		     :flex "1 0")))))
+	      :padding "0.25rem 0.75rem"))
+      (*#banner :object-fit "cover"
+		:height #(banner-height)
+		:width "100%")
+      (article :margin "0rem 15%")
+      (footer :display "flex"
+	      :flex-direction "row"
+	      :width "auto"
+	      :background-color #(dark-background)
+	      :padding "0.5rem 0.5rem"
+	      (i :font-size #(icon-size)
+		 :text-align "center"
+		 :width #(icon-size)
+		 :height #(icon-size))
+	      (a :display "flex"
+		 :flex-direction "row"
+		 :align-items "center"
+		 :justify-content "center"
+		 :color #(light-text)
+		 :padding "0.25rem"
+		 :text-decoration "none"
+		 :width "1.5rem"
+		 :height "1.5rem"
+		 :margin "0rem 0.25rem")))))
 
-(defmacro with-layout ((&key title) &body body)
+(defmacro with-layout ((&key title (profile "/profile.jpg")) &body body)
+  "Generate HTML content with a standard layout."
   `(spinneret:with-html-string
      (:doctype)
      (:html
@@ -96,30 +118,41 @@
 			  page-y-offset)))
 		  (defun handle-scroll ()
 		    (let ((scroll-amount (get-y-scroll)))
-		      (chain document body style
-			     (set-property "--scroll" (/ scroll-amount (@ window inner-height)))))))))
+		      (parenscript:chain document body style
+			     (set-property "--scroll" (/ scroll-amount (parenscript:@ window inner-height)))))))))
       (:body :onscroll (:raw (parenscript:ps (handle-scroll)))
 	     (:nav
-	      (:a :href "/" "Home"))
+	      (:img :src ,profile :alt "profile" :id "profile")
+	      (:a :href "/" "Home")
+	      (:a :href "/about" "About"))
 	     (:img :src "/banner.jpg" :alt "banner" :id "banner")
-	     (:article ,@body)))))
+	     (:article ,@body)
+	     (:footer
+	      (:a :href "https://github.com/mjalen"
+		  (:i :class "fa-brands fa-github" :title "GitHub"))
+	      (:a :href "https://wwww.linkedin.com/in/jalen-moore-a3a923275"
+		  (:i :class "fa-brands fa-linkedin" :title "LinkedIn")))))))
 
-(hunchentoot:define-easy-handler (main :uri "/")
+(hunchentoot:define-easy-handler (home :uri "/")
     ()
   (with-layout (:title "Hello")
     (:h1 "Hello!")
-    (:button :data-hx-get "/test" :hx-swap "innerHTML" "Test")
+    (:button :data-hx-get "/test?count=1" :hx-swap "outerHTML" "0")
+    (:button :data-hx-get "/test?count=1" :hx-swap "outerHTML" "0")
     (:p "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est igitur officium eius generis, quod nec in bonis ponatur nec in contrariis. Quid ergo aliud intellegetur nisi uti ne quae pars naturae neglegatur? Indicant pueri, in quibus ut in speculis natura cernitur. Duo Reges: constructio interrete. Qui autem voluptate vitam effici beatam putabit, qui sibi is conveniet, si negabit voluptatem crescere longinquitate? Vide, ne magis, inquam, tuum fuerit, cum re idem tibi, quod mihi, videretur, non nova te rebus nomina inponere. Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Aliter enim nosmet ipsos nosse non possumus. Quod idem cum vestri faciant, non satis magnam tribuunt inventoribus gratiam. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur? Quid affers, cur Thorius, cur Caius Postumius, cur omnium horum magister, Orata, non iucundissime vixerit?")
     (:p "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est igitur officium eius generis, quod nec in bonis ponatur nec in contrariis. Quid ergo aliud intellegetur nisi uti ne quae pars naturae neglegatur? Indicant pueri, in quibus ut in speculis natura cernitur. Duo Reges: constructio interrete. Qui autem voluptate vitam effici beatam putabit, qui sibi is conveniet, si negabit voluptatem crescere longinquitate? Vide, ne magis, inquam, tuum fuerit, cum re idem tibi, quod mihi, videretur, non nova te rebus nomina inponere. Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Aliter enim nosmet ipsos nosse non possumus. Quod idem cum vestri faciant, non satis magnam tribuunt inventoribus gratiam. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur? Quid affers, cur Thorius, cur Caius Postumius, cur omnium horum magister, Orata, non iucundissime vixerit?")
     (:p "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est igitur officium eius generis, quod nec in bonis ponatur nec in contrariis. Quid ergo aliud intellegetur nisi uti ne quae pars naturae neglegatur? Indicant pueri, in quibus ut in speculis natura cernitur. Duo Reges: constructio interrete. Qui autem voluptate vitam effici beatam putabit, qui sibi is conveniet, si negabit voluptatem crescere longinquitate? Vide, ne magis, inquam, tuum fuerit, cum re idem tibi, quod mihi, videretur, non nova te rebus nomina inponere. Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Aliter enim nosmet ipsos nosse non possumus. Quod idem cum vestri faciant, non satis magnam tribuunt inventoribus gratiam. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur? Quid affers, cur Thorius, cur Caius Postumius, cur omnium horum magister, Orata, non iucundissime vixerit?")
     (:p "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est igitur officium eius generis, quod nec in bonis ponatur nec in contrariis. Quid ergo aliud intellegetur nisi uti ne quae pars naturae neglegatur? Indicant pueri, in quibus ut in speculis natura cernitur. Duo Reges: constructio interrete. Qui autem voluptate vitam effici beatam putabit, qui sibi is conveniet, si negabit voluptatem crescere longinquitate? Vide, ne magis, inquam, tuum fuerit, cum re idem tibi, quod mihi, videretur, non nova te rebus nomina inponere. Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Aliter enim nosmet ipsos nosse non possumus. Quod idem cum vestri faciant, non satis magnam tribuunt inventoribus gratiam. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur? Quid affers, cur Thorius, cur Caius Postumius, cur omnium horum magister, Orata, non iucundissime vixerit?")
     (:p "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est igitur officium eius generis, quod nec in bonis ponatur nec in contrariis. Quid ergo aliud intellegetur nisi uti ne quae pars naturae neglegatur? Indicant pueri, in quibus ut in speculis natura cernitur. Duo Reges: constructio interrete. Qui autem voluptate vitam effici beatam putabit, qui sibi is conveniet, si negabit voluptatem crescere longinquitate? Vide, ne magis, inquam, tuum fuerit, cum re idem tibi, quod mihi, videretur, non nova te rebus nomina inponere. Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Aliter enim nosmet ipsos nosse non possumus. Quod idem cum vestri faciant, non satis magnam tribuunt inventoribus gratiam. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur? Quid affers, cur Thorius, cur Caius Postumius, cur omnium horum magister, Orata, non iucundissime vixerit?")))
 
-(let ((count 0))
-  (hunchentoot:define-easy-handler (test :uri "/test")
-      ()
-    (spinneret:with-html-string
-      (:p (progn
-	    (setf count (1+ count))
-	    count)))))
+(hunchentoot:define-easy-handler (about :uri "/about")
+    ()
+  (with-layout (:title "About")
+    (:h1 "About")))
 
+(hunchentoot:define-easy-handler (test :uri "/test")
+    (count)
+  (let ((int-count (parse-integer count)))
+    (let ((next-query (format nil "/test?count=~a" (1+ int-count))))
+      (spinneret:with-html-string
+	(:button :data-hx-get next-query :hx-swap "outerHTML" int-count)))))

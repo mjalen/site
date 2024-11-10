@@ -1,0 +1,18 @@
+#! /bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+
+(progn
+  (ros:ensure-asdf)
+  (#+quicklisp (ql:quickload '(:mjalen/site) :silent t)) 
+
+(defun main (&rest argv)
+  (declare (ingore argv))
+  (mjalen/site:safe-start-server (make-instance 'hunchentoot:easy-acceptor
+                                    :port 33333
+ 				    :document-root #p"/Users/jalenmoore/Documents/cl-personal/public/")))
+
+(main)
+

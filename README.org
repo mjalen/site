@@ -1,0 +1,9 @@
+* Site
+
+** About/Why
+
+This is a personal site project inspired by the existence of HTMX. This project has a few goals:
+
+- I love Common Lisp (CL), but I could be much more comfortable in it. Write a project in a domain I am familiar with (web dev) while learning more about CL.
+- Aim to use HTMX where-ever I would usually reach for React.
+- Have fun :)
