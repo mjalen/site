@@ -4,12 +4,11 @@
 ;; lass for css
 ;; parenscript for js.
 (defpackage :site/main
-  (:use :cl)
+  (:use :cl :spinneret/ps) 
   (:export
    :safe-start-server))
 
 (in-package :site/main)
-(asdf:load-system :spinneret/ps)
 
 (defparameter *server* nil)
 (defun safe-start-server ()
