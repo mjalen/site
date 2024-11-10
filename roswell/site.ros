@@ -1,14 +1,19 @@
-#! /bin/sh
+#!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
 exec ros -Q -- $0 "$@"
 |#
-
-(progn
+(progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp (ql:quickload '(:site)))
+  #+quicklisp(ql:quickload '(:site) :silent t)
+  )
+
+(defpackage :ros.script.site.3940269840
+  (:use :cl))
+(in-package :ros.script.site.3940269840)
 
 (defun main (&rest argv)
-  (declare (ignore argv))
+  (declare (ignorable argv))
   (site/main:safe-start-server))
 
+;;; vim: set ft=lisp lisp:
