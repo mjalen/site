@@ -1,15 +1,15 @@
-(asdf:load-system :spinneret/ps)
+(in-package :asdf-user)
 
-(asdf:defsystem #:site
+(load-system :spinneret/ps)
+(defsystem #:site
   :description "A personal site for moi."
   :version "0.0.1"
   :author "Jalen Moore <jalennm@icloud.com>"
   :license "Public Domain"
-  :depends-on ("hunchentoo"
+  :pathname "src"
+  :depends-on ("hunchentoot"
 	       "spinneret"
 	       "lass"
 	       "parenscript")
   :components
-  ((:module "src"
-    :components
-    ((:file "main")))))
+  ((:file "main")))

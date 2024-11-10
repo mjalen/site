@@ -11,13 +11,13 @@
 (in-package :site/main)
 
 (defparameter *server* nil)
-(defun safe-start-server (public-path)
+(defun safe-start-server ()
   "Verify that the current *SERVER* is not running before overriding the server with a new PUBLIC-PATH."
   (if *server*
       (hunchentoot:stop *server*))
   (setf *server* (make-instance 'hunchentoot:easy-acceptor
                                 :port 33333
- 				:document-root public-path))
+ 				:document-root (asdf:system-relative-pathname :site "public/")))
   (hunchentoot:start *server*))
 
 "Global CSS"
