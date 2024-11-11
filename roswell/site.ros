@@ -13,6 +13,6 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&optional (port "80") &rest argv)
   (declare (ignorable argv))
-  (safe-start-server (parse-int port)))
+  (safe-start-server (parse-integer port)))
 
 ;;; vim: set ft=lisp lisp:
