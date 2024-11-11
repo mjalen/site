@@ -11,88 +11,14 @@
 (in-package :site/main)
 
 (defparameter *server* nil)
-(defun safe-start-server ()
+(defun safe-start-server (&optional (port 33333))
   "Verify that the current *SERVER* is not running before overriding the server with a new PUBLIC-PATH."
   (if *server*
       (hunchentoot:stop *server*))
   (setf *server* (make-instance 'hunchentoot:easy-acceptor
-                                :port 80 
+                                :port port
  				:document-root (asdf:system-relative-pathname :site "public/")))
   (hunchentoot:start *server*))
-
-"Old Global CSS"
-(defparameter *css-old*
-  '((html
-     :min-height "100%")
-    (:let ((light-text "#eee")
-	   (dark-background "#1e1e1e")
-	   (primary "#cacdcb")
-	   (secondary "#eaeaea")
-	   (shadow "0.0rem 0.25rem 0.25rem 0 rgb(0 0 0 / 0.15)")
-	   (banner-height "400px")
-	   (icon-size "1.75rem"))
-      (body :--scroll 0			; handled by js
-	    :display "flex"
-	    :flex-direction "column"
-	    :margin "0rem"
-	    :font-family "sans serif"
-	    :height "auto"
-	    :min-height "100vh")
-      (button :padding "0.25rem 0.75rem"
-	      :background-color #(primary))
-      (a :padding "0.25rem"
-	 :color "blue"
-	 :text-decoration-style "dotted"
-	 :text-decoration "underline")
-      ((:and a :hover) :color #(dark-background)
-		       :background-color #(secondary)
-		       :border-radius "0.15rem")
-      ((:and a :focus) :color #(dark-background)
-		       :background-color #(primary)
-		       :border-radius "0.15rem")
-      (nav :z-index 999
-	   :position "sticky"
-	   :display "flex"
-	   :align-items "center"
-	   :top "0%"
-	   :left "0%"
-	   :background-color #(dark-background)
-	   :padding "0.5rem 0.5rem"
-	   :box-shadow #(shadow)
-	   (img :height "max(3rem, calc(6rem - var(--scroll) * 3rem))"
-		:width "max(3rem, calc(6rem - var(--scroll) * 3rem))"
-		:border-radius "10rem"
-		:border-width "0.5rem"
-		:border-style "solid"
-		:border-color #(dark-background)
-		:margin "0.25rem 0.75rem"
-		:top "0.25rem")
-	   (a :color #(light-text)
-	      :padding "0.25rem 0.75rem"))
-      (*#banner :object-fit "cover"
-		:height #(banner-height)
-		:width "70%"
-		:margin "0rem 15%")
-      (article :margin "0rem 15%")
-      (footer :display "flex"
-	      :flex-direction "row"
-	      :width "auto"
-	      :background-color #(dark-background)
-	      :padding "0.5rem 0.5rem"
-	      (i :font-size #(icon-size)
-		 :text-align "center"
-		 :width #(icon-size)
-		 :height #(icon-size))
-	      (a :display "flex"
-		 :flex-direction "row"
-		 :align-items "center"
-		 :justify-content "center"
-		 :color #(light-text)
-		 :padding "0.25rem"
-		 :text-decoration "none"
-		 :width "1.5rem"
-		 :height "1.5rem"
-		 :margin "0rem 0.25rem")))))
 
 (defparameter *css-simple*
   '((html :font-size "1rem"
