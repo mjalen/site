@@ -11,8 +11,8 @@ exec ros -Q -- $0 "$@"
   (:use :cl :site/main))
 (in-package :ros.script.site.3940269840)
 
-(defun main (&optional (port 80) &rest argv)
+(defun main (&optional (port "80") &rest argv)
   (declare (ignorable argv))
-  (safe-start-server port))
+  (safe-start-server (parse-int port)))
 
 ;;; vim: set ft=lisp lisp:
